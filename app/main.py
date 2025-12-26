@@ -1,6 +1,7 @@
 import uvicorn
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
+
 from core.middleware import middleware
 from bot.tgb import router as bot_router
 from databases.kv import router as kv_router
