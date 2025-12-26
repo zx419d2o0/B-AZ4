@@ -1,0 +1,54 @@
+[tool.poetry]
+name = "x-az4"
+version = "0.1.0"
+description = "???"
+authors = ["Your Name <you@example.com>"]
+# readme = "README.md"
+
+packages = [
+    {include = "app"},
+    {include = "scripts"}
+]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+cython = "^3.0.11"
+pytelegrambotapi = "^4.26.0"
+av = "^14.0.1"
+redis = "^5.2.1"
+pytest = "^8.3.4"
+fastapi = "^0.121.2"
+uvicorn = "^0.38.0"
+python-dotenv = "^1.2.1"
+aiohttp = "^3.13.2"
+setuptools = "^80.9.0"
+qrcode = "^8.2"
+python-multipart = "^0.0.20"
+telethon = "^1.42.0"
+pysocks = "^1.7.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+acp = "scripts.commands:acp"
+init = "scripts.commands:init"
+debug = "scripts.commands:test"
+clean = "scripts.commands:clean"
+compile = "scripts.commands:compile"
+
+[[tool.poetry.source]]
+name = "aliyun"
+url = "https://mirrors.aliyun.com/pypi/simple"
+priority = "primary"
+
+[[tool.poetry.source]]
+name = "tsinghua"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+priority = "supplemental"
+
+[[tool.poetry.source]]
+name = "ustc"
+url = "https://mirrors.ustc.edu.cn/pypi/simple/"
+priority = "supplemental"
