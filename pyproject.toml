@@ -31,6 +31,11 @@ pysocks = "^1.7.1"
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
+[tool.pytest.ini_options]
+# import_mode = "append"
+testpaths = ["tests"]
+pythonpath = ["app"]
+
 [tool.poetry.scripts]
 acp = "scripts.commands:acp"
 init = "scripts.commands:init"

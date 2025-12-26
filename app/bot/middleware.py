@@ -1,4 +1,5 @@
 from telebot.asyncio_handler_backends import BaseMiddleware, CancelUpdate
+from core.config import config
 
 class Middleware(BaseMiddleware):
     def __init__(self, bot) -> None:
@@ -8,7 +9,7 @@ class Middleware(BaseMiddleware):
 
 
     async def pre_process(self, message, data):
-        if message.from_user.id == 6645610577:
+        if message.from_user.id == config.TG_ADMIN_ID:
             pass
         else:
             await self.bot.send_message(message.chat.id, 'You are not authorized to use this bot')

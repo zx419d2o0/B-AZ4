@@ -2,15 +2,10 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from telebot.async_telebot import AsyncTeleBot
     from telebot.types import Message
-# from loguru import logger
 from services.google import gemini
 from core.string_helper import split_markdown
 
 
-# genai.configure(api_key=os.getenv("BARD_API_KEY"))
-# model = genai.GenerativeModel('gemini-2.0-flash-exp')
-# chat = model.start_chat(history=[])
-# logger.add("cache/logs/file_{time}.log", rotation="1 day", retention=7)
 def all_text_without_command(message: 'Message') -> bool:
     return message.content_type == 'text' and not message.text.startswith('/')
 

@@ -1,8 +1,6 @@
 .DS_Store
 .vscode
 .vercel
-output/
-self.session
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
