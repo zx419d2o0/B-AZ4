@@ -7,6 +7,7 @@ import time
 import uuid
 from construct import Struct, Int16ub, Int32ub, Bytes, this
 from fastapi import APIRouter, Request
+from fastapi.responses import PlainTextResponse
 
 router = APIRouter()
 
@@ -484,4 +485,4 @@ async def ysp(request: Request):
     Timestamp = int(time.time())
     StaGuid = RandomHexStr(32)
     ckey = ckey42(Platform, Timestamp, sdtfrom, Cnlid, StaGuid, appVer)
-    return ckey
+    return PlainTextResponse(content=ckey)
