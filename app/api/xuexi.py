@@ -531,6 +531,7 @@ def ysp(cnlid: str, livepid: str, defn: str = "auto"):
         ckey=ckey42(Platform, Timestamp, sdtfrom, Cnlid, StaGuid, appVer)
         params.update({"cKey":ckey})
         data = requests.get(url,params=params,headers=headers).json()
+        print(data)
         if defn=="auto":
             formats=data['formats']
             return  JSONResponse(content={"formats": formats})
