@@ -6,3 +6,4 @@ pillow
 telethon
 pyTelegramBotAPI
 redis==5.2.1
+construct==2.8.8
