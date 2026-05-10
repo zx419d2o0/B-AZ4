@@ -47,7 +47,7 @@ COPY pyproject.toml uv.lock* ./
 RUN uv sync --frozen
 
 # Copy built application
-COPY --from=builder /build/dist ./app
+COPY --from=builder /build/dist/app ./app
 COPY --from=builder /build/app/main.py ./app
 
 # Copy nginx configuration
