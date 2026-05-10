@@ -20,7 +20,7 @@ COPY scripts ./scripts
 
 # Install dependencies
 RUN poetry config virtualenvs.create false \
- && poetry install --no-interaction --no-ansi
+ && poetry install --no-interaction --no-ansi --no-root
 
 # Run compile step (generate dist)
 RUN poetry run compile && ls -la dist
