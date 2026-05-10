@@ -37,13 +37,15 @@ RUN apt-get update && apt-get install -y \
     nginx \
     && rm -rf /var/lib/apt/lists/*
 
+RUN echo "alias ll='ls -alF'" >> ~/.bashrc
+
 # Install uv
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+# COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
 
 # Copy virtual environment
 COPY --from=builder /build/.venv /.venv
-RUN ls -la /
+RUN ll /
 
 # Use virtual environment binaries
 ENV PATH="/.venv/bin:$PATH"
@@ -53,7 +55,7 @@ RUN which python
 COPY --from=builder /build/dist/app /app
 RUN rm /app/*.so
 COPY --from=builder /build/app/main.py /app
-RUN ls -la /app
+RUN ll /app
 
 # Copy nginx configuration
 COPY nginx.conf /etc/nginx/nginx.conf

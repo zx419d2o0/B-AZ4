@@ -5,7 +5,7 @@ import telebot
 import importlib
 
 router = APIRouter()
-bot = AsyncTeleBot(config.BOT_HTTP_TOKEN)
+bot = AsyncTeleBot(config.BOT_HTTP_TOKEN) if config.BOT_HTTP_TOKEN else None
 MODULES = ["chat", "git_search", "others", "welcome", "redisdb"]
 for mod in MODULES:
     module = importlib.import_module(f'bot.{mod}')
