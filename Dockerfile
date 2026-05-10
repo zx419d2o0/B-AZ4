@@ -47,7 +47,7 @@ RUN ls -la /
 
 # Use virtual environment binaries
 ENV PATH="/.venv/bin:$PATH"
-RUN WHICH python
+RUN which python
 
 # Copy built application
 COPY --from=builder /build/dist/app /app
@@ -60,4 +60,4 @@ COPY nginx.conf /etc/nginx/nginx.conf
 EXPOSE 80
 
 # Start services
-CMD ["sh", "-c", "nginx && python -m uvicorn app.main:app --host 0.0.0.0 --port 43210"]
+CMD ["sh", "-c", "nginx && python -m uvicorn app.main:app --host 0.0.0.0"]
