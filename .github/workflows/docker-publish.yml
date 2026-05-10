@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
-      contents: read
+      contents: write
       packages: write
 
     steps:
@@ -27,19 +27,19 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       # 3️⃣ build 镜像
-      - name: Build Docker gimage
+      - name: Build Docker image
         run: |
-          docker build -t ghcr.io/${{ github.repository_owner }}/ipyaz4n:latest .
+          docker build -t ghcr.io/${{ github.repository_owner }}/ipyaz4:latest .
 
       # 4️⃣ push 到 GHCR
       - name: Push to GHCR
         run: |
-          docker push ghcr.io/${{ github.repository_owner }}/ipyaz4n:latest
+          docker push ghcr.io/${{ github.repository_owner }}/ipyaz4:latest
 
       # 5️⃣ save 成 tar
       - name: Save Docker image
         run: |
-          docker save ghcr.io/${{ github.repository_owner }}/ipyaz4n:latest -o ipyaz4.tar
+          docker save ghcr.io/${{ github.repository_owner }}/ipyaz4:latest -o ipyaz4.tar
 
       # 6️⃣ 创建 Release
       - name: Create Release
