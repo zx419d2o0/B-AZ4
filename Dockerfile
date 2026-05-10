@@ -52,7 +52,7 @@ RUN which python
 # Copy built application
 COPY --from=builder /build/dist/app/. /app/
 COPY --from=builder /build/app/main.py /app
-RUN ls -la app
+RUN ls -la /app
 
 # Copy nginx configuration
 COPY nginx.conf /etc/nginx/nginx.conf
