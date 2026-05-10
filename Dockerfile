@@ -47,7 +47,7 @@ RUN ls -la /
 
 # Use virtual environment binaries
 ENV PATH="/.venv/bin:$PATH"
-RUN EXPORT
+RUN WHICH python
 
 # Copy built application
 COPY --from=builder /build/dist/app /app
