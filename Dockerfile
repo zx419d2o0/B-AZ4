@@ -40,14 +40,17 @@ RUN apt-get update && apt-get install -y \
 # Install uv
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
-# Copy dependency files
-COPY pyproject.toml uv.lock* ./
 
-# Install runtime Python dependencies
-RUN uv sync --frozen
+# Copy virtual environment
+COPY --from=builder /build/.venv /.venv
+RUN ls -la /
+
+# Use virtual environment binaries
+ENV PATH="/.venv/bin:$PATH"
+RUN EXPORT
 
 # Copy built application
-COPY --from=builder /build/dist/app ./app
+COPY --from=builder /build/dist/app /app
 COPY --from=builder /build/app/main.py ./app
 RUN ls -la app
 
@@ -57,4 +60,4 @@ COPY nginx.conf /etc/nginx/nginx.conf
 EXPOSE 80
 
 # Start services
-CMD ["sh", "-c", "nginx && uvicorn app.main:app --host 0.0.0.0 --port 43210"]
+CMD ["sh", "-c", "nginx && python -m uvicorn app.main:app --host 0.0.0.0 --port 43210"]
