@@ -5,50 +5,56 @@ FROM python:3.12-slim AS builder
 
 WORKDIR /build
 
-# Install build dependencies (needed for poetry install / compile)
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     nginx \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Install poetry
-RUN pip install --no-cache-dir poetry
+# Install uv (recommended official binary install)
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# Copy project files (full source needed for compile)
+ENV PATH="/root/.local/bin:$PATH"
+
+# Copy full project
 COPY . .
 
-# Install dependencies
-RUN poetry config virtualenvs.create false \
- && poetry install --no-interaction --no-ansi --no-root
+# Install dependencies using uv
+RUN uv sync
 
 # Run compile step (generate dist)
-RUN poetry run compile && ls -la dist
+RUN ls -la
+# RUN uv run python -c "from scripts.commands import compile; compile()" \
+#     && ls -la dist
 
 
 # =========================
 # Runtime stage
 # =========================
-FROM python:3.12-slim
+# FROM python:3.12-slim
 
-WORKDIR /app
+# WORKDIR /app
 
-# Install only runtime system dependencies
-RUN apt-get update && apt-get install -y nginx \
-    && rm -rf /var/lib/apt/lists/*
+# # Install minimal runtime dependencies
+# RUN apt-get update && apt-get install -y \
+#     nginx \
+#     curl \
+#     && rm -rf /var/lib/apt/lists/*
 
-# Install poetry (only for runtime deps install)
-RUN pip install --no-cache-dir poetry
+# # Install uv (binary install)
+# RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+# ENV PATH="/root/.local/bin:$PATH"
 
-# Copy dependency definition only
-COPY pyproject.toml poetry.lock* ./
+# # Copy dependency definition only
+# COPY pyproject.toml uv.lock* ./
 
-# Install ONLY runtime dependencies (no build tools)
-RUN poetry config virtualenvs.create false \
- && poetry install --no-interaction --no-ansi --only main
+# # Install ONLY runtime dependencies
+# RUN uv sync --frozen
 
-# Copy built artifacts from builder
-COPY --from=builder /build/dist/app ./app
+# # Copy built artifacts from builder
+# COPY --from=builder /build/dist ./dist
 
-# Copy app needed for uvicorn runtime
+# Copy nginx config
 COPY nginx.conf /etc/nginx/nginx.conf
 
 EXPOSE 80
