@@ -3,7 +3,7 @@
 # =========================
 FROM python:3.12-slim AS builder
 
-WORKDIR /app
+WORKDIR /build
 
 # Install build dependencies (needed for poetry install / compile)
 RUN apt-get update && apt-get install -y \
