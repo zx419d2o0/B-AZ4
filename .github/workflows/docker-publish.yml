@@ -1,0 +1,49 @@
+name: Syntax check 
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      packages: write
+
+    steps:
+      # 1️⃣ 拉代码
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 2️⃣ 登录 GHCR
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # 3️⃣ build 镜像
+      - name: Build Docker image
+        run: |
+          docker build -t ghcr.io/${{ github.repository_owner }}/ipyaz4:latest .
+
+      # 4️⃣ push 到 GHCR
+      - name: Push to GHCR
+        run: |
+          docker push ghcr.io/${{ github.repository_owner }}/ipyaz4:latest
+
+      # 5️⃣ save 成 tar
+      - name: Save Docker image
+        run: |
+          docker save ghcr.io/${{ github.repository_owner }}/ipyaz4:latest -o ipyaz4.tar
+
+      # 6️⃣ 创建 Release
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v0.0.1
+          files: ipyaz4.tar
