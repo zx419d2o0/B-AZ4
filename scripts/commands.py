@@ -6,17 +6,17 @@ import shutil
 import os
 
 
-def init():
-    print('poetry env info --path')
-    subprocess.run(['poetry', 'env', 'info', '--path'])
+# def init():
+#     print('poetry env info --path')
+#     subprocess.run(['poetry', 'env', 'info', '--path'])
 
 
 def test():
-    subprocess.run(["poetry", "run", "pytest", "tests", "-v", "-s"])
+    subprocess.run(["uv", "run", "pytest", "tests", "-v", "-s"])
 
 
 def compile():
-    subprocess.run(["poetry", "run", "python", "setup.py", "build_ext", "--inplace"])
+    subprocess.run(["uv", "run", "python", "setup.py", "build_ext", "--inplace"])
     if os.path.exists('dist'):
         with open('main.py', 'r', encoding='utf-8') as f:
             content = f.read()
