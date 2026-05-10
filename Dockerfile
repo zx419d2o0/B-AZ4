@@ -2,21 +2,19 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-# Install system dependencies (nginx)
+# Install system dependencies
 RUN apt-get update && apt-get install -y nginx && rm -rf /var/lib/apt/lists/*
 
 # Install poetry
-
 RUN pip install --no-cache-dir poetry
 
 # Copy poetry files
-
 COPY pyproject.toml poetry.lock* ./
 
 # Install dependencies
-
 RUN poetry config virtualenvs.create false \
  && poetry install --no-interaction --no-ansi --no-root
+RUN poetry run compile && ls -la dist
 
 # Copy application code
 COPY app /app/app
