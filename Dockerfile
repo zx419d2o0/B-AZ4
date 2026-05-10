@@ -50,8 +50,8 @@ ENV PATH="/.venv/bin:$PATH"
 RUN which python
 
 # Copy built application
-COPY --from=builder /build/dist/app /app
-COPY --from=builder /build/app/main.py ./app
+COPY --from=builder /build/dist/app/. /app/
+COPY --from=builder /build/app/main.py /app
 RUN ls -la app
 
 # Copy nginx configuration
