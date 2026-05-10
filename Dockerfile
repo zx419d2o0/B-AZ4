@@ -1,36 +1,59 @@
-FROM python:3.12-slim
+# =========================
+# Builder stage
+# =========================
+FROM python:3.12-slim AS builder
 
 WORKDIR /app
 
-# Install system dependencies
+# Install build dependencies (needed for poetry install / compile)
 RUN apt-get update && apt-get install -y \
     nginx \
-    gcc \
-    build-essential \
-    libffi-dev \
-    libssl-dev \
-    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Install poetry
 RUN pip install --no-cache-dir poetry
 
-# Copy poetry files
+# Copy project files (full source needed for compile)
 COPY pyproject.toml poetry.lock* ./
+COPY app ./app
+COPY scripts ./scripts
 
 # Install dependencies
 RUN poetry config virtualenvs.create false \
  && poetry install --no-interaction --no-ansi
-RUN poetry run compile
 
-# Copy application code
-COPY app /app/app
+# Run compile step (generate dist)
+RUN poetry run compile && ls -la dist
 
-# Copy nginx config
+
+# =========================
+# Runtime stage
+# =========================
+FROM python:3.12-slim
+
+WORKDIR /app
+
+# Install only runtime system dependencies
+RUN apt-get update && apt-get install -y nginx \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install poetry (only for runtime deps install)
+RUN pip install --no-cache-dir poetry
+
+# Copy dependency definition only
+COPY pyproject.toml poetry.lock* ./
+
+# Install ONLY runtime dependencies (no build tools)
+RUN poetry config virtualenvs.create false \
+ && poetry install --no-interaction --no-ansi --only main
+
+# Copy built artifacts from builder
+COPY --from=builder /app/dist ./dist
+
+# Copy app needed for uvicorn runtime
+COPY app ./app
 COPY nginx.conf /etc/nginx/nginx.conf
 
-# Expose ports (nginx entrypoint)
 EXPOSE 80
 
-# Start nginx + uvicorn
-CMD sh -c "nginx && uvicorn app.main:app --host 0.0.0.0 --port 43210"
+CMD ["sh", "-c", "nginx && uvicorn app.main:app --host 0.0.0.0 --port 43210"]
