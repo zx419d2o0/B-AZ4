@@ -48,10 +48,9 @@ RUN poetry config virtualenvs.create false \
  && poetry install --no-interaction --no-ansi --only main
 
 # Copy built artifacts from builder
-COPY --from=builder /app/dist ./dist
+COPY --from=builder /build/dist/app ./app
 
 # Copy app needed for uvicorn runtime
-COPY app ./app
 COPY nginx.conf /etc/nginx/nginx.conf
 
 EXPOSE 80
