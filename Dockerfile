@@ -21,6 +21,8 @@ COPY . .
 
 # Install dependencies and build
 RUN uv sync && uv run compile
+RUN cd app && uv run init
+
 
 WORKDIR /app
 
@@ -30,7 +32,6 @@ RUN mv /tmp/nginx.conf /etc/nginx/nginx.conf
 RUN rm -rf /tmp/* /app/*.so
 RUN ls -la /app
 RUN ls -la /tmp
-RUN uv run init
 
 # Ensure entrypoint executable
 RUN chmod +x /entrypoint.sh
