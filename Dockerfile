@@ -52,7 +52,7 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 # RUN ls -la /
 
 # Use virtual environment binaries
-# ENV PATH="/.venv/bin:$PATH"
+ENV PATH="/app/.venv/bin:$PATH"
 # RUN which python
 
 # Copy built application
