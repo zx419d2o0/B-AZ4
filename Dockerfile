@@ -14,8 +14,7 @@ RUN apt-get update && apt-get install -y \
     gcc \
     g++ \
     python3 \
-    python3-pip \
-    && rm -rf /var/lib/apt/lists/*
+    python3-pip
 
 # Copy project files
 COPY . .
@@ -53,7 +52,7 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
 # Use virtual environment binaries
 ENV PATH="/app/.venv/bin:$PATH"
-# RUN which python
+RUN which python
 
 # Copy built application
 COPY pyproject.toml uv.lock /app/main.py /app/
