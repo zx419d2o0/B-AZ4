@@ -26,13 +26,13 @@ RUN cd app
 
 WORKDIR /app
 
-RUN cp -r /tmp/dist/app /app/app
+RUN cp -r /tmp/dist/app /app
 RUN cp -r /tmp/dist/main.py /app
 RUN mv /tmp/entrypoint.sh /entrypoint.sh
 RUN mv /tmp/nginx.conf /etc/nginx/nginx.conf
 RUN rm -rf /tmp /app/*.so
 RUN ls -la /app
-RUN ls -la /tmp
+RUN ls -la /
 
 # Ensure entrypoint executable
 RUN chmod +x /entrypoint.sh
