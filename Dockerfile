@@ -1,18 +1,20 @@
 # =========================
 # Builder stage
 # =========================
-FROM python:3.12-slim AS builder
+FROM ubuntu:latest AS builder
 
 WORKDIR /build
 
 # Install uv
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
-# Install build tools
+# Install build tools and Python3, pip
 RUN apt-get update && apt-get install -y \
     build-essential \
     gcc \
     g++ \
+    python3 \
+    python3-pip \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy project files
@@ -28,18 +30,19 @@ RUN uv run compile
 # =========================
 # Runtime stage
 # =========================
-FROM python:3.12-slim
+FROM ubuntu:latest
 
 WORKDIR /app
 
-# Install runtime dependencies
+# Install runtime dependencies, Python3, pip, and nginx
 RUN apt-get update && apt-get install -y \
     nginx \
+    python3 \
     && rm -rf /var/lib/apt/lists/*
 
 # Install uv
 # COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
-RUN echo "alias ll='ls -alF'" >> ~/.bashrc
+# RUN echo "alias ll='ls -alF'" >> ~/.bashrc
 
 # Copy virtual environment
 COPY --from=builder /build/.venv /.venv
