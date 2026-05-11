@@ -68,21 +68,16 @@ async def pass_verify():
     for i in range(10):
         content, captcha = qw.get_captcha()
         captcha = captcha.replace(" ", "")
-        # 2️⃣ 格式校验（必须4位数字）
         print(f'第{i+1}次尝试[{captcha}]')
 
         if not (captcha.isdigit() and len(captcha) == 4):
             continue
 
-        # 3️⃣ 提交验证
         result = qw.verify_captcha(captcha)
-
-        # 4️⃣ 判断结果
-        if isinstance(result, dict):
-            if result.get("code") == 1:
-                file_manager.save_file(f"qiwei_captcha/{captcha}.png", content)
-                return captcha
-            else:
-                print(captcha, result.get("msg"))
+        if isinstance(result, dict) and result.get("code") == 1:
+            file_manager.save_file(f"qiwei_captcha/{captcha}.png", content)
+            return captcha
+        else:
+            print(captcha, result.get("msg"))
 
     return Response(content=content, media_type='image/png')

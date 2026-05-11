@@ -1,7 +1,7 @@
 # =========================
 # Builder stage
 # =========================
-FROM ubuntu:latest AS builder
+FROM ubuntu:24.04 AS builder
 
 WORKDIR /build
 
@@ -30,7 +30,7 @@ RUN uv run compile
 # =========================
 # Runtime stage
 # =========================
-FROM ubuntu:latest
+FROM ubuntu:24.04:latest
 
 WORKDIR /app
 
