@@ -7,8 +7,14 @@ from bot.tgb import router as bot_router
 from databases.kv import router as kv_router
 from api.mtproto import router as mtproto_router
 from api.ffmpeg import router as ffmpeg_router
-from app.api.qwnull import router as qn_router
 
+def safe_register(app: FastAPI):
+    try:
+        from app.api.qwnull import router
+    except ImportError:
+        print(f"ocr 缺少依赖")
+        return
+    app.include_router(router, prefix="/qiwei", tags=["ocr"])
 
 def create_app() -> FastAPI:
     app = FastAPI(docs_url=None)
@@ -16,7 +22,7 @@ def create_app() -> FastAPI:
     app.include_router(kv_router, tags=['redis'])
     app.include_router(mtproto_router, prefix='/svc', tags=['tgapi'])
     app.include_router(ffmpeg_router, prefix='/svc', tags=['service'])
-    app.include_router(qn_router, prefix='/qiwei', tags=['ocr'])
+    safe_register(app)
     app.middleware('http')(middleware)
 
     @app.get("/", include_in_schema=False)
