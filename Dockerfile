@@ -1,68 +1,38 @@
 # =========================
-# Builder stage
+# Single stage build + runtime
 # =========================
-FROM ubuntu:24.04 AS builder
+FROM ubuntu:24.04
 
-WORKDIR /build
+WORKDIR /tmp
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential gcc g++ \
+    python3 python3-pip \
+    nginx \
+    libgl1 libglib2.0-0 libgomp1 \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install uv
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
-# Install build tools and Python3, pip
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    gcc \
-    g++ \
-    python3 \
-    python3-pip \
-    && rm -rf /var/lib/apt/lists/*
-
-# Copy project files
+# Copy project
 COPY . .
 
-# Install dependencies
-RUN uv sync
-
-# Build dist artifacts
-RUN uv run compile
-
-
-# =========================
-# Runtime stage
-# =========================
-FROM ubuntu:24.04
+# Install dependencies and build
+RUN uv sync && uv run compile
 
 WORKDIR /app
 
-# Install runtime dependencies, Python3, pip, and nginx
-RUN apt-get update && apt-get install -y \
-    nginx \
-    python3 \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install uv
-# COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
-# RUN echo "alias ll='ls -alF'" >> ~/.bashrc
-
-# Copy virtual environment
-COPY --from=builder /build/.venv /.venv
-RUN ls -la /
-
-# Use virtual environment binaries
-ENV PATH="/.venv/bin:$PATH"
-RUN which python
-
-# Copy built application
-COPY --from=builder /build/dist/app /app
-RUN rm /app/*.so
-COPY --from=builder /build/app/main.py /app
+RUN cp -r /tmp/dist/. /app/
+RUN mv /tmp/entrypoint.sh /entrypoint.sh
+RUN mv /tmp/nginx.conf /etc/nginx/nginx.conf
+RUN rm -rf /tmp /app/*.so
 RUN ls -la /app
+RUN ls -la /tmp
+RUN uv run init
 
-# Copy nginx configuration
-COPY nginx.conf /etc/nginx/nginx.conf
-
-# Copy entrypoint script
-COPY entrypoint.sh /entrypoint.sh
+# Ensure entrypoint executable
 RUN chmod +x /entrypoint.sh
 
 EXPOSE 80

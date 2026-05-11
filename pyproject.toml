@@ -39,7 +39,11 @@ build-backend = "hatchling.build"
 packages = ["app"]
 
 [project.scripts]
+init = "scripts.commands:init"
 acp = "scripts.commands:acp"
 debug = "scripts.commands:test"
 clean = "scripts.commands:clean"
 compile = "scripts.commands:compile"
+
+[tool.setuptools]
+packages = ["app"]

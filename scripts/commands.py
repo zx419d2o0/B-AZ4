@@ -6,9 +6,9 @@ import shutil
 import os
 
 
-# def init():
-#     print('poetry env info --path')
-#     subprocess.run(['poetry', 'env', 'info', '--path'])
+def init():
+    print('poetry env info --path')
+    subprocess.run(['uv', 'run', 'bash', '-c', "cd app && python -c 'from app.main import create_app; create_app()'"])
 
 
 def test():
