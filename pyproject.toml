@@ -24,9 +24,9 @@ dependencies = [
   "telethon>=1.42.0",
   "pysocks>=1.7.1",
   "curl-cffi>=0.15.0",
-  "paddleocr>=3.5.0",
   "beautifulsoup4>=4.14.3",
   "paddlepaddle>=3.3.1",
+  "paddleocr>=3.5.0",
 ]
 
 
