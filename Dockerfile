@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y \
     build-essential gcc g++ \
     python3 python3-pip \
     nginx \
-    libgl1 libglib2.0-0 libgomp1 \
+    # libgl1 libglib2.0-0 libgomp1 \
     && rm -rf /var/lib/apt/lists/*
 
 # Install uv
@@ -21,18 +21,18 @@ COPY . .
 
 # Install dependencies and build
 RUN uv sync && uv run compile
-RUN cd app
 
 
 WORKDIR /app
 
-RUN cp -r /tmp/dist/app /app
+RUN cp -r /tmp/dist/app/. /app
 RUN cp -r /tmp/dist/main.py /app
+
+
 RUN mv /tmp/entrypoint.sh /entrypoint.sh
 RUN mv /tmp/nginx.conf /etc/nginx/nginx.conf
 RUN rm -rf /tmp /app/*.so
 RUN ls -la /app
-RUN ls -la /
 
 # Ensure entrypoint executable
 RUN chmod +x /entrypoint.sh
