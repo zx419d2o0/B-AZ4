@@ -10,6 +10,5 @@ services:
     ports:
       - 4190:80
     environment:
-      - http_proxy=http://127.0.0.1:7890
-      - https_proxy=http://127.0.0.1:7890
+      - proxy_http=http://127.0.0.1:7890
 ```

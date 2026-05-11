@@ -58,7 +58,10 @@ RUN ls -la /app
 # Copy nginx configuration
 COPY nginx.conf /etc/nginx/nginx.conf
 
+# Copy entrypoint script
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 EXPOSE 80
 
-# Start services
-CMD ["sh", "-c", "nginx && python -m uvicorn main:app --host 0.0.0.0"]
+ENTRYPOINT ["/entrypoint.sh"]
