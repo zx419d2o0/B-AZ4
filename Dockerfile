@@ -30,7 +30,7 @@ RUN uv run compile
 # =========================
 # Runtime stage
 # =========================
-FROM ubuntu:24.04:latest
+FROM ubuntu:24.04
 
 WORKDIR /app
 
