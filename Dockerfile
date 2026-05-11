@@ -61,4 +61,4 @@ COPY nginx.conf /etc/nginx/nginx.conf
 EXPOSE 80
 
 # Start services
-CMD ["sh", "-c", "nginx && python -m uvicorn app.main:app --host 0.0.0.0"]
+CMD ["sh", "-c", "nginx && python -m uvicorn main:app --host 0.0.0.0"]
