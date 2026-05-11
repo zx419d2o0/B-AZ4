@@ -27,7 +27,7 @@ WORKDIR /app
 RUN cp -r /tmp/dist/. /app/
 RUN mv /tmp/entrypoint.sh /entrypoint.sh
 RUN mv /tmp/nginx.conf /etc/nginx/nginx.conf
-RUN rm -rf /tmp /app/*.so
+RUN rm -rf /tmp/* /app/*.so
 RUN ls -la /app
 RUN ls -la /tmp
 RUN uv run init
