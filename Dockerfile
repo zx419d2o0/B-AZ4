@@ -1,40 +1,71 @@
 # =========================
-# Single stage build + runtime
+# Builder stage
 # =========================
-FROM ubuntu:24.04
+FROM ubuntu:24.04 AS builder
 
-WORKDIR /tmp
-
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    build-essential gcc g++ \
-    python3 python3-pip \
-    nginx \
-    libgl1 libglib2.0-0 libgomp1 \
-    && rm -rf /var/lib/apt/lists/*
+WORKDIR /build
 
 # Install uv
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
-# Copy project
+# Install build tools and Python3, pip
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    gcc \
+    g++ \
+    python3 \
+    python3-pip \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy project files
 COPY . .
 
-# Install dependencies and build
-RUN uv sync && uv run compile
+# Install dependencies
+RUN uv sync
 
+# Build dist artifacts
+RUN uv run compile
+
+
+# =========================
+# Runtime stage
+# =========================
+FROM ubuntu:24.04
 
 WORKDIR /app
 
-RUN cp -r /tmp/dist/app/. /app
-RUN cp -r /tmp/dist/main.py /app
+# Install runtime dependencies, Python3, pip, and nginx
+RUN apt-get update && apt-get install -y \
+    nginx \
+    python3 \
+    libgl1 \
+    libglib2.0-0 \
+    libgomp1 \
+    && rm -rf /var/lib/apt/lists/*
 
+# Install uv
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+# RUN echo "alias ll='ls -alF'" >> ~/.bashrc
 
-RUN mv /tmp/entrypoint.sh /entrypoint.sh
-RUN mv /tmp/nginx.conf /etc/nginx/nginx.conf
-RUN rm -rf /tmp /app/*.so
+# Copy virtual environment
+# COPY --from=builder /build/.venv /.venv
+# RUN ls -la /
+
+# Use virtual environment binaries
+# ENV PATH="/.venv/bin:$PATH"
+# RUN which python
+
+# Copy built application
+COPY pyproject.toml uv.lock /app/main.py /app/
+COPY --from=builder /build/dist/app /app
+RUN rm /app/*.so
 RUN ls -la /app
 
-# Ensure entrypoint executable
+# Copy nginx configuration
+COPY nginx.conf /etc/nginx/nginx.conf
+
+# Copy entrypoint script
+COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 EXPOSE 80
