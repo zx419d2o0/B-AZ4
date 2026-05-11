@@ -57,6 +57,7 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
 # Copy built application
 COPY pyproject.toml uv.lock /app/main.py /app/
+RUN uv sync --frozen
 COPY --from=builder /build/dist/app /app
 RUN rm /app/*.so
 RUN ls -la /app
