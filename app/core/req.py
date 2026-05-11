@@ -62,14 +62,18 @@ class HttpClient:
         async with aiohttp.ClientSession() as session:
             try:
                 async with session.request(method, url, headers=headers, **kwargs) as response:
-                    body = await response.text()
                     content = await response.read()
+                    try:
+                        body = content.decode(response.charset or "utf-8")
+                    except Exception:
+                        body = None
+                        
                     return HttpResponse(
                         url=str(response.real_url),
                         status_code=response.status,
                         headers=dict(response.request_info.headers),
                         body=body,
-                        content=content if body == "" else None,  # 避免文本响应占用 `content`
+                        content=content,
                     )
             except (aiohttp.ClientError, asyncio.TimeoutError) as e:
                 print(f"[{url}] params={kwargs.get('params')} -> (error={e})")

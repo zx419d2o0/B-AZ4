@@ -6,9 +6,14 @@ services:
     container_name: ipyaz4
     restart: unless-stopped
     volumes:
+      - ./data:/home/data
       - ./download:/home/download
     ports:
       - 4190:80
     environment:
       - proxy_http=http://127.0.0.1:7890
+```
+
+```bash
+docker load -i ipyaz4.tar && docker image prune -f
 ```

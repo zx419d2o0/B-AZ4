@@ -9,7 +9,7 @@ class KV:
     @property
     def redis(self):
         if self._r is None:
-            self._r = redis.Redis.from_url(config.REDIS_URL)
+            self._r = redis.Redis.from_url(config.REDIS_URL, decode_responses=True)
         return self._r
     
     def print(self):
@@ -25,6 +25,28 @@ class KV:
 
 kv = KV()
 router = APIRouter()
+
+@router.post("/kv-set")
+async def kv_set(request: Request):
+    form = await request.form()
+    key = form.get('key')
+    value = form.get('value')
+    ttl = form.get('ttl')
+
+    if not key or value is None:
+        return {"error": "missing key or value parameter"}
+
+    try:
+        ttl = int(ttl) if ttl is not None else 60 * 60 * 24 * 7
+    except Exception:
+        ttl = 60 * 60 * 24 * 7
+
+    kv.redis.set(key, value, ex=ttl)
+
+    return {
+        "key": key,
+        "ttl": ttl
+    }
 
 @router.post("/kv-get")
 async def kv_get(request: Request):
