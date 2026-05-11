@@ -53,7 +53,7 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 # Use virtual environment binaries
 COPY pyproject.toml uv.lock /app/main.py /app/
 RUN uv sync --frozen
-ENV PATH="/app/.venv/bin:$PATH"
+ENV PATH=".venv/bin:$PATH"
 RUN which python
 
 # Copy built application
