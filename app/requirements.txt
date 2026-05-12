@@ -6,3 +6,4 @@ pillow
 telethon
 pyTelegramBotAPI
 redis==5.2.1
+ddddocr

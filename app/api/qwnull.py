@@ -1,16 +1,14 @@
 from fastapi import APIRouter, Response
 from curl_cffi import requests
 from bs4 import BeautifulSoup
-from paddleocr import PaddleOCR
-import numpy as np
-import cv2
+import ddddocr
 
 from databases.kv import kv
 from core.file_helper import file_manager
 
 router = APIRouter()
 
-ocr = PaddleOCR(lang='en')
+ocr = ddddocr.DdddOcr(show_ad=False)
 
 class Qiwei:
     def __init__(self):
@@ -45,16 +43,11 @@ class Qiwei:
         return response.json()
 
 def recognize_captcha(image_bytes: bytes) -> str:
-    image = cv2.imdecode(np.frombuffer(image_bytes, np.uint8), cv2.IMREAD_COLOR)
-    result = ocr.predict(image)
+    # ddddocr directly supports raw image bytes
+    text = ocr.classification(image_bytes)
 
-    text = ""
-    if isinstance(result, list) and result:
-        item = result[0]
-        if isinstance(item, dict) and "rec_texts" in item:
-            text = "".join(item["rec_texts"])
-        else:
-            text = str(item)
+    if not text:
+        return ""
 
     # remove spaces
     text = text.replace(" ", "")
