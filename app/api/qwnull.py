@@ -22,7 +22,7 @@ class Qiwei:
         cookie = kv.redis.get('site:cookie:qn63')
         self.headers = { "Cookie": cookie }
 
-    def get_captcha(self) -> str:
+    def get_captcha(self) -> tuple[bytes, str]:
         response = requests.get(self.url + '/verify/index.html', headers=self.headers)
         digits = recognize_captcha(response.content)
         return response.content, digits
@@ -44,13 +44,16 @@ class Qiwei:
 
 def recognize_captcha(image_bytes: bytes) -> str:
     # ddddocr directly supports raw image bytes
-    text = ocr.classification(image_bytes)
+    try:
+        text = ocr.classification(image_bytes)
+    except Exception as e:
+        print("[OCR ERROR] type(image_bytes):", type(image_bytes))
+        print("[OCR ERROR] len(image_bytes):", len(image_bytes) if image_bytes else 0)
+        print("[OCR ERROR] exception:", repr(e))
+        text = ""
 
     if not text:
         return ""
-
-    # remove spaces
-    text = text.replace(" ", "")
 
     return text
 
